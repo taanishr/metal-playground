@@ -1,7 +1,7 @@
 # Xcode
 *.xcuserstate
 *.xcworkspace
-*.xcodeproj/*
+*.xcodeproj/
 !*.xcodeproj/project.pbxproj
 *.swp
 .DS_Store
