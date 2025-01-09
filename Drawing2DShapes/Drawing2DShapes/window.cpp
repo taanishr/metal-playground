@@ -22,6 +22,8 @@ Renderer::~Renderer()
 {
     m_commandQueue->release();
     m_device->release();
+    m_renderPipelineState->release();
+    m_vertexBuffer->release();
 }
 
 void Renderer::makePipeline()
