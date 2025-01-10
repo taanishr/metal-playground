@@ -57,11 +57,13 @@ public func releaseMDLMesh(mdlMeshPtr: UnsafeMutableRawPointer)
     mdlMesh.release();
 }
 
-// MTKMeshBuffer
-// MTLVertexBuffer*
-// int offset
-
 // MTKMesh
+// getVertexBuffers: [MTKMeshBuffer]
+// getVertexDescriptor: MDLVertexDescriptor
+// var submeshes: [MTKSubmesh]
+// var vertexCount: Int
+// c++ equivalents created on construction by calling private helpers
+
 // create
 // (MDLMesh, device)
 public func createMTKMesh(mdlMeshPtr: UnsafeMutableRawPointer, devicePtr: UnsafeMutableRawPointer) -> UnsafeMutableRawPointer?
@@ -79,20 +81,111 @@ public func createMTKMesh(mdlMeshPtr: UnsafeMutableRawPointer, devicePtr: Unsafe
     return mtkMeshPtr;
 }
 
-// getVertexBuffers: [MTKMeshBuffer]
-// getVertexDescriptor: MDLVertexDescriptor
-// var submeshes: [MTKSubmesh]
-// var vertexCount: Int
-// c++ equivalents created on construction by calling private helpers
 
-// release
+// MTKMeshBuffer
+// MTLVertexBuffer*
+// int offset
+// get Vertex buffers
+public func countVertexBuffers(
+    mtkMeshPtr: UnsafeMutableRawPointer
+) -> Int
+{
+    let mtkMesh = Unmanaged<MTKMesh>.fromOpaque(mtkMeshPtr).takeUnretainedValue();
+    let vertexBuffers = mtkMesh.vertexBuffers;
+    return vertexBuffers.count;
+}
 
-// will be made in c++, doesnt need swift equivalent, but need to be able to get erquired data
+public func extractMeshBuffers
+(
+    mtkMeshPtr: UnsafeMutableRawPointer,
+    mtkVertexBuffersPtr: UnsafeMutablePointer<UnsafeMutableRawPointer>,
+    offsetsPtr: UnsafeMutablePointer<Int>
+)
+{
+    let mtkMesh = Unmanaged<MTKMesh>.fromOpaque(mtkMeshPtr).takeUnretainedValue();
+    let vertexBuffers = mtkMesh.vertexBuffers;
+    for (index, vertexBuffer) in vertexBuffers.enumerated() {
+        mtkVertexBuffersPtr[index] = UnsafeMutableRawPointer(Unmanaged.passUnretained(vertexBuffer.buffer).toOpaque());
+        offsetsPtr[index] = vertexBuffer.offset;
+    }
+}
+
 // MTKSubmesh
 //var primitiveType: MTLPrimitiveType
 //var indexType: MTLIndexType
 //var indexBuffer: MTKMeshBuffer
 //var indexCount: Int
+public func countSubmeshes(
+    mtkMeshPtr: UnsafeMutableRawPointer
+) -> Int
+{
+    let mtkMesh = Unmanaged<MTKMesh>.fromOpaque(mtkMeshPtr).takeUnretainedValue();
+    let submeshes = mtkMesh.submeshes;
+    return submeshes.count;
+}
+
+
+public func extractSubmeshPrimitiveTypes(
+    mtkMeshPtr: UnsafeMutableRawPointer,
+    primitiveTypesPtr: UnsafeMutablePointer<UInt>
+)
+{
+    let mtkMesh = Unmanaged<MTKMesh>.fromOpaque(mtkMeshPtr).takeUnretainedValue();
+    let submeshBuffers = mtkMesh.submeshes;
+    for (index, submesh) in submeshBuffers.enumerated() {
+        primitiveTypesPtr[index] = submesh.primitiveType.rawValue;
+    }
+}
+
+public func extractSubmeshIndexTypes(
+    mtkMeshPtr: UnsafeMutableRawPointer,
+    indexTypesPtr: UnsafeMutablePointer<UInt>
+)
+{
+    let mtkMesh = Unmanaged<MTKMesh>.fromOpaque(mtkMeshPtr).takeUnretainedValue();
+    let submeshBuffers = mtkMesh.submeshes;
+    for (index, vertexBuffer) in submeshBuffers.enumerated() {
+        indexTypesPtr[index] = vertexBuffer.indexType.rawValue;
+    }
+}
+
+public func extractSubmeshIndexBuffers
+(
+    mtkMeshPtr: UnsafeMutableRawPointer,
+    submeshBufffersPtr: UnsafeMutablePointer<UnsafeMutableRawPointer>,
+    offsetsPtr: UnsafeMutablePointer<Int>
+)
+{
+    let mtkMesh = Unmanaged<MTKMesh>.fromOpaque(mtkMeshPtr).takeUnretainedValue();
+    let submeshBuffers = mtkMesh.submeshes;
+    for (index, submesh) in submeshBuffers.enumerated() {
+        submeshBufffersPtr[index] = UnsafeMutableRawPointer(Unmanaged.passUnretained(submesh.indexBuffer.buffer).toOpaque());
+        offsetsPtr[index] = submesh.indexBuffer.offset;
+    }
+}
+
+public func extractSubmeshIndexCounts
+(
+    mtkMeshPtr: UnsafeMutableRawPointer,
+    submeshIndexCounts: UnsafeMutablePointer<Int>
+)
+{
+    let mtkMesh = Unmanaged<MTKMesh>.fromOpaque(mtkMeshPtr).takeUnretainedValue();
+    let submeshes = mtkMesh.submeshes;
+    for (index, submesh) in submeshes.enumerated() {
+        submeshIndexCounts[index] = submesh.indexCount;
+    }
+}
+
+// release
+public func releaseMTKMesh(mtkMeshPtr: UnsafeMutableRawPointer)
+{
+    let mtkMesh = Unmanaged<MTKMesh>.fromOpaque(mtkMeshPtr);
+    mtkMesh.release();
+}
+
+
+
 
 
 

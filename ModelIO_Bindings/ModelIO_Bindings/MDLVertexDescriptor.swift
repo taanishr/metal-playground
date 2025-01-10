@@ -10,7 +10,7 @@ import ModelIO
 
 // MDL Vertex Attribute
 // create
-public func createMDLVertexAttribute(namePtr: UnsafeMutablePointer<CChar>, rawFormat: UInt, offset: Int, bufferIndex: Int) -> UnsafeMutableRawPointer
+public func createMDLVertexAttribute(namePtr: UnsafePointer<CChar>, rawFormat: UInt, offset: Int, bufferIndex: Int) -> UnsafeMutableRawPointer
 {
     let name = String(cString: namePtr);
     let format = MDLVertexFormat(rawValue: rawFormat)!;
@@ -26,15 +26,6 @@ public func releaseMDLVertexAttribute(mdlVertexAttributePtr: UnsafeMutableRawPoi
     mdlVertexAttribute.release();
 }
 
-// MDL Vertex Layout
-// set layout
-public func setMDLVertexLayout(mdlVertexDescriptorPtr: UnsafeMutableRawPointer, index: Int, stride: Int)
-{
-    let mdlVertexDescriptor = Unmanaged<MDLVertexDescriptor>.fromOpaque(mdlVertexDescriptorPtr).takeUnretainedValue();
-    let newLayout = MDLVertexBufferLayout(stride: stride);
-    mdlVertexDescriptor.layouts[index] = newLayout;
-}
-
 // MDL Vertex Descriptor
 // create
 public func createMDLVertexDescriptor() -> UnsafeMutableRawPointer
@@ -42,6 +33,15 @@ public func createMDLVertexDescriptor() -> UnsafeMutableRawPointer
     let mdlVertexDescriptor = MDLVertexDescriptor();
     let mdlVertexDescriptorPtr = Unmanaged<MDLVertexDescriptor>.passRetained(mdlVertexDescriptor).toOpaque();
     return mdlVertexDescriptorPtr;
+}
+
+// MDL Vertex Layout
+// set layout
+public func setMDLVertexLayout(mdlVertexDescriptorPtr: UnsafeMutableRawPointer, index: Int, stride: Int)
+{
+    let mdlVertexDescriptor = Unmanaged<MDLVertexDescriptor>.fromOpaque(mdlVertexDescriptorPtr).takeUnretainedValue();
+    let newLayout = MDLVertexBufferLayout(stride: stride);
+    mdlVertexDescriptor.layouts[index] = newLayout;
 }
 
 // set vertex attribute
