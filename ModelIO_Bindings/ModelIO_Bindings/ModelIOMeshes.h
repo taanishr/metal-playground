@@ -45,15 +45,14 @@ namespace ModelIO {
 
     class MTKMeshBuffer {
     public:
-        MTKMeshBuffer(MTL::Buffer* buffer, long offset, bool ownsBuffer);
+        MTKMeshBuffer(MTL::Buffer* buffer, long offset);
         ~MTKMeshBuffer();
         
         MTL::Buffer* getBuffer();
-        int getOffset();
+        long getOffset();
     private:
-        MTL::Buffer* m_buffer;
+        NS::SharedPtr<MTL::Buffer> m_buffer;
         long m_offset;
-        bool m_ownsBuffer;
     };
 
     class MTKSubmesh {

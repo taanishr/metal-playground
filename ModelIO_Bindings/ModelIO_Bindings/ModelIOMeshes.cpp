@@ -48,24 +48,20 @@ namespace ModelIO {
         ModelIO_Bindings::setMDLMeshVertexDescriptor(m_mesh->get(), vertexDescriptor.getVertexDescriptor());
     }
 
-    MTKMeshBuffer::MTKMeshBuffer(MTL::Buffer* buffer, long offset, bool ownsBuffer):
-        m_buffer{buffer}, m_offset{offset}, m_ownsBuffer{ownsBuffer}
+    MTKMeshBuffer::MTKMeshBuffer(MTL::Buffer* buffer, long offset):
+        m_buffer{NS::RetainPtr(buffer)}, m_offset{offset} // retain does not take ownership, transfer does
     {}
 
     MTL::Buffer* MTKMeshBuffer::getBuffer()
     {
-        return m_buffer;
+        return m_buffer.get();
     }
 
-    int MTKMeshBuffer::getOffset() {
+    long MTKMeshBuffer::getOffset() {
         return m_offset;
     }
 
-    MTKMeshBuffer::~MTKMeshBuffer()
-    {
-        if (m_ownsBuffer)
-            m_buffer->release();
-    }
+MTKMeshBuffer::~MTKMeshBuffer() = default;
 
     MTKSubmesh::MTKSubmesh(MTL::PrimitiveType primitiveType,
                       MTL::IndexType indexType,
