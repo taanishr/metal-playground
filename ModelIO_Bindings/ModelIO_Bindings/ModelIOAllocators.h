@@ -12,6 +12,7 @@
 
 namespace ModelIO {
     class MTKMeshBufferAllocator {
+    public:
         MTKMeshBufferAllocator(MTL::Device* device);
         ~MTKMeshBufferAllocator();
         

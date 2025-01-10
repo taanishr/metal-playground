@@ -15,9 +15,16 @@ import Metal
 // sphere with extent
 // (sphereWithExtent: <#T##vector_float3#>, segments: <#T##vector_uint2#>, inwardNormals: <#T##Bool#>, geometryType: <#T##MDLGeometryType#>, allocator: <#T##MDLMeshBufferAllocator?#>)
 
+func pointerToSIMD<T: SIMD>(
+    pointer: UnsafePointer<T.Scalar>
+) -> T where T.Scalar: Numeric {
+    let simdVector = T((0..<T.scalarCount).map { pointer[$0] });
+    return simdVector;
+}
+
 public func createSphereMDLMesh(
-    sphereWithExtent: simd_float3,
-    segments: simd_uint2,
+    sphereWithExtentPtr: UnsafePointer<Float>,
+    segmentsPtr: UnsafePointer<UInt32>,
     inwardNormals: Bool,
     rawGeometryType: Int,
     allocatorPtr: UnsafeMutableRawPointer
@@ -26,7 +33,11 @@ public func createSphereMDLMesh(
 {
     let allocator = Unmanaged<MTKMeshBufferAllocator>.fromOpaque(allocatorPtr).takeUnretainedValue();
     let geometryType = MDLGeometryType(rawValue: rawGeometryType)!;
-    let mdlMesh = MDLMesh(sphereWithExtent: sphereWithExtent, segments: segments, inwardNormals: inwardNormals, geometryType: geometryType, allocator: allocator);
+    let mdlMesh = MDLMesh(sphereWithExtent: pointerToSIMD(pointer: sphereWithExtentPtr),
+                          segments: pointerToSIMD(pointer: segmentsPtr),
+                          inwardNormals: inwardNormals,
+                          geometryType: geometryType,
+                          allocator: allocator);
     let mdlMeshPtr = UnsafeMutableRawPointer(Unmanaged.passRetained(mdlMesh).toOpaque());
     return mdlMeshPtr;
 }
@@ -36,8 +47,8 @@ public func createSphereMDLMesh(
 //(boxWithExtent: <#T##vector_float3#>, segments: <#T##vector_uint3#>, inwardNormals: <#T##Bool#>, geometryType: <#T##MDLGeometryType#>, allocator: MDLMeshBufferAllocator?)
 
 public func createBoxMDLMesh(
-    boxWithExtent: simd_float3,
-    segments: simd_uint3,
+    boxWithExtentPtr: UnsafePointer<Float>,
+    segmentsPtr: UnsafePointer<UInt32>,
     inwardNormals: Bool,
     rawGeometryType: Int,
     allocatorPtr: UnsafeMutableRawPointer
@@ -45,9 +56,21 @@ public func createBoxMDLMesh(
 {
     let allocator = Unmanaged<MTKMeshBufferAllocator>.fromOpaque(allocatorPtr).takeUnretainedValue();
     let geometryType = MDLGeometryType(rawValue: rawGeometryType)!;
-    let mdlMesh = MDLMesh(boxWithExtent: boxWithExtent, segments: segments, inwardNormals: inwardNormals, geometryType: geometryType, allocator: allocator);
+    let mdlMesh = MDLMesh(boxWithExtent: pointerToSIMD(pointer: boxWithExtentPtr),
+                          segments: pointerToSIMD(pointer: segmentsPtr),
+                          inwardNormals: inwardNormals,
+                          geometryType: geometryType,
+                          allocator: allocator);
     let mdlMeshPtr = UnsafeMutableRawPointer(Unmanaged.passRetained(mdlMesh).toOpaque());
     return mdlMeshPtr;
+}
+
+public func setMDLMeshVertexDescriptor(mdlMeshPtr: UnsafeMutableRawPointer,
+                                       mdlVertexDescriptorPtr: UnsafeMutableRawPointer)
+{
+    let mdlMesh = Unmanaged<MDLMesh>.fromOpaque(mdlMeshPtr).takeUnretainedValue();
+    let mdlVertexDescriptor = Unmanaged<MDLVertexDescriptor>.fromOpaque(mdlVertexDescriptorPtr).takeUnretainedValue();
+    mdlMesh.vertexDescriptor = mdlVertexDescriptor;
 }
 
 // release
@@ -81,6 +104,11 @@ public func createMTKMesh(mdlMeshPtr: UnsafeMutableRawPointer, devicePtr: Unsafe
     return mtkMeshPtr;
 }
 
+public func getMTKMeshVertexCount(mdlMeshPtr: UnsafeMutableRawPointer) -> Int
+{
+    let mdlMesh = Unmanaged<MDLMesh>.fromOpaque(mdlMeshPtr).takeUnretainedValue();
+    return mdlMesh.vertexCount;
+}
 
 // MTKMeshBuffer
 // MTLVertexBuffer*
