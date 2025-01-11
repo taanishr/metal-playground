@@ -70,7 +70,7 @@ namespace ModelIO {
 
     void MDLVertexDescriptor::setAttribute(int index, MDLVertexAttribute& vertexAttribute)
     {
-        if (index > m_attributes.size()) {
+        if (index >= m_attributes.size()) {
             m_attributes.push_back(vertexAttribute);
         }else {
             m_attributes[index] = vertexAttribute;
@@ -86,7 +86,7 @@ namespace ModelIO {
 
     void MDLVertexDescriptor::setLayout(int index, MDLVertexLayout& vertexLayout)
 {
-        if (index > m_layouts.size()) {
+        if (index >= m_layouts.size()) {
             m_layouts.push_back(vertexLayout);
         }else {
             m_layouts[index] = vertexLayout;
