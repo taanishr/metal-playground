@@ -9,7 +9,7 @@
 
 namespace ModelIO {
     MDLVertexLayout::MDLVertexLayout(int stride):
-        m_stride{0}
+        m_stride{stride}
     {}
         
     int MDLVertexLayout::getStride() const
@@ -52,7 +52,7 @@ namespace ModelIO {
         return m_bufferIndex;
     }
 
-    SwiftObject* MDLVertexAttribute::getVertexAttribute()
+    SwiftObject* MDLVertexAttribute::getVertexAttribute() const
     {
         return m_vertexAttribute.get();
     }
@@ -68,7 +68,7 @@ namespace ModelIO {
 
     MDLVertexDescriptor::~MDLVertexDescriptor() = default;
 
-    void MDLVertexDescriptor::setAttribute(int index, MDLVertexAttribute& vertexAttribute)
+    void MDLVertexDescriptor::setAttribute(int index, const MDLVertexAttribute& vertexAttribute)
     {
         if (index >= m_attributes.size()) {
             m_attributes.push_back(vertexAttribute);
@@ -84,7 +84,7 @@ namespace ModelIO {
         return m_attributes[index];
     }
 
-    void MDLVertexDescriptor::setLayout(int index, MDLVertexLayout& vertexLayout)
+    void MDLVertexDescriptor::setLayout(int index, const MDLVertexLayout& vertexLayout)
 {
         if (index >= m_layouts.size()) {
             m_layouts.push_back(vertexLayout);
@@ -100,8 +100,14 @@ namespace ModelIO {
         return m_layouts[index];
     }
 
-    SwiftObject* MDLVertexDescriptor::getVertexDescriptor()
+    SwiftObject* MDLVertexDescriptor::getVertexDescriptor() const
     {
         return m_vertexDescriptor.get();
+    }
+
+    MTL::VertexDescriptor* MDLtoMTLVertexDescriptor(MDLVertexDescriptor& vertexDescriptor)
+    {
+        return static_cast<MTL::VertexDescriptor*>
+            (ModelIO_Bindings::MDLtoMTLVertexDescriptor(vertexDescriptor.getVertexDescriptor()->get()));
     }
 }

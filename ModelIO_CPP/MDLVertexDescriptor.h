@@ -8,11 +8,15 @@
 
 #ifndef MDLVERTEXDESCRIPTOR_H
 #define MDLVERTEXDESCRIPTOR_H
-#include "ModelIO.h"
+#include "ModelIO_Internal.h"
 #include <memory>
 #include <iostream>
 
 namespace ModelIO {
+    constexpr const char* MDLVertexAttributePosition = "position";
+
+    constexpr const char* MDLVertexAttributeNormal = "normal";
+
     enum class MDLGeometryType {
         points,
         lines,
@@ -46,7 +50,7 @@ namespace ModelIO {
         MDLVertexFormat getVertexFormat() const;
         int getOffset() const;
         int getBufferIndex() const;
-        SwiftObject* getVertexAttribute();
+        SwiftObject* getVertexAttribute() const;
     private:
         std::string m_name;
         MDLVertexFormat m_vertexFormat;
@@ -60,17 +64,19 @@ namespace ModelIO {
         MDLVertexDescriptor();
         ~MDLVertexDescriptor();
         
-        void setAttribute(int index, MDLVertexAttribute& vertexAttribute);
+        void setAttribute(int index, const MDLVertexAttribute& vertexAttribute);
         const MDLVertexAttribute& getAttribute(int index) const;
-        void setLayout(int index, MDLVertexLayout& vertexLayout);
+        void setLayout(int index, const MDLVertexLayout& vertexLayout);
         const MDLVertexLayout& getLayout(int index) const;
-        SwiftObject* getVertexDescriptor();
+        SwiftObject* getVertexDescriptor() const;
     //        MTL::VertexDescriptor* createMTLVertexDescriptor(); // must release
     private:
         std::shared_ptr<SwiftObject> m_vertexDescriptor;
         std::vector<MDLVertexAttribute> m_attributes;
         std::vector<MDLVertexLayout> m_layouts;
     };
+
+    MTL::VertexDescriptor* MDLtoMTLVertexDescriptor(MDLVertexDescriptor& vertexDescriptor);
 }
 
 #endif

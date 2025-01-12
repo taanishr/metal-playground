@@ -2,15 +2,12 @@
 //  ModelIO.h
 //  ModelIO_Bindings
 //
-//  Created by Taanish Reja on 1/9/25.
+//  Created by Taanish Reja on 1/11/25.
 //
 
-#ifndef MODELIO_H
-#define MODELIO_H
-
-#include "SwiftObject.h"
-#include <ModelIO_Bindings-Swift.h>
-#include "metal_imports.h"
-
-#endif
-
+#ifndef MODEL_IO
+#define MODEL_IO
+#include "ModelIOAllocators.h"
+#include "MDLVertexDescriptor.h"
+#include "ModelIOMeshes.h"
+#nedif

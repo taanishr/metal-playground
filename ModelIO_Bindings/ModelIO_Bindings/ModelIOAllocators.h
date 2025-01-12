@@ -8,7 +8,7 @@
 
 #ifndef MODELIOALLOCATORS_H
 #define MODELIOALLOCATORS_H
-#include "ModelIO.h"
+#include "ModelIO_Internal.h"
 
 namespace ModelIO {
     class MTKMeshBufferAllocator {

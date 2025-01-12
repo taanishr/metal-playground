@@ -7,7 +7,7 @@
 
 #ifndef MODELIOMESHES_H
 #define MODELIOMESHES_H
-#include "ModelIO.h"
+#include "ModelIO_Internal.h"
 #include "MDLVertexDescriptor.h"
 #include "ModelIOAllocators.h"
 
@@ -28,8 +28,6 @@ namespace ModelIO {
 
     class MDLMesh {
     public:
-        MDLMesh() = delete;
-        
         MDLMesh(Sphere sphere, MTKMeshBufferAllocator& allocator);
         
         MDLMesh(Box box, MTKMeshBufferAllocator& allocator);
@@ -39,7 +37,10 @@ namespace ModelIO {
         SwiftObject* retrieveMesh();
         
         void setVertexDescriptor(MDLVertexDescriptor& vertexDescriptor);
+        
+        MDLVertexDescriptor& getVeretexDescriptor();
     private:
+        MDLVertexDescriptor m_vertexDescriptor;
         std::shared_ptr<SwiftObject> m_mesh;
     };
 
@@ -59,24 +60,24 @@ namespace ModelIO {
     public:
         MTKSubmesh(MTL::PrimitiveType primitiveType,
                       MTL::IndexType indexType,
-                      MTKMeshBuffer& indexBuffer,
-                      int indexCount);
+                      const MTKMeshBuffer& indexBuffer,
+                      long indexCount);
         ~MTKSubmesh();
         
         MTL::PrimitiveType getPrimitiveType();
         MTL::IndexType getIndexType();
         MTKMeshBuffer& getIndexBuffer();
-        int getIndexCount();
+        long getIndexCount();
     private:
         MTL::PrimitiveType m_primitiveType;
         MTL::IndexType m_indexType;
         MTKMeshBuffer m_indexBuffer;
-        int m_indexCount;
+        long m_indexCount;
     };
 
     class MTKMesh {
     public:
-        MTKMesh() = delete;
+        MTKMesh() = default;
         
         MTKMesh(MDLMesh& mesh, MTL::Device* device);
         

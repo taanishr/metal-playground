@@ -45,7 +45,13 @@ namespace ModelIO {
     
     void MDLMesh::setVertexDescriptor(MDLVertexDescriptor& vertexDescriptor)
     {
-        ModelIO_Bindings::setMDLMeshVertexDescriptor(m_mesh->get(), vertexDescriptor.getVertexDescriptor());
+        ModelIO_Bindings::setMDLMeshVertexDescriptor(m_mesh->get(), vertexDescriptor.getVertexDescriptor()->get());
+        m_vertexDescriptor = vertexDescriptor;
+    }
+
+    MDLVertexDescriptor& MDLMesh::getVeretexDescriptor()
+    {
+        return m_vertexDescriptor;
     }
 
     MTKMeshBuffer::MTKMeshBuffer(MTL::Buffer* buffer, long offset):
@@ -61,12 +67,12 @@ namespace ModelIO {
         return m_offset;
     }
 
-MTKMeshBuffer::~MTKMeshBuffer() = default;
+    MTKMeshBuffer::~MTKMeshBuffer() = default;
 
     MTKSubmesh::MTKSubmesh(MTL::PrimitiveType primitiveType,
                       MTL::IndexType indexType,
-                      MTKMeshBuffer& indexBuffer,
-                      int indexCount):
+                      const MTKMeshBuffer& indexBuffer,
+                      long indexCount):
         m_primitiveType(primitiveType),
         m_indexType{indexType},
         m_indexBuffer{indexBuffer},
@@ -91,7 +97,7 @@ MTKMeshBuffer::~MTKMeshBuffer() = default;
         return m_indexBuffer;
     }
 
-    int MTKSubmesh::getIndexCount()
+    long MTKSubmesh::getIndexCount()
     {
         return m_indexCount;
     }
@@ -125,14 +131,22 @@ MTKMeshBuffer::~MTKMeshBuffer() = default;
         
         unsigned long primitiveTypes[submeshCount];
         unsigned long indexTypes[submeshCount];
-        void* submeshBufffers[submeshCount];
-        long submeshBuffferOffsets[submeshCount];
+        void* submeshBuffers[submeshCount];
+        long submeshBufferOffsets[submeshCount];
         long indexCounts[submeshCount];
         
         ModelIO_Bindings::extractSubmeshPrimitiveTypes(m_mesh->get(), primitiveTypes);
         ModelIO_Bindings::extractSubmeshIndexTypes(m_mesh->get(), indexTypes);
-        ModelIO_Bindings::extractSubmeshIndexBuffers(m_mesh->get(), submeshBufffers, submeshBuffferOffsets);
+        ModelIO_Bindings::extractSubmeshIndexBuffers(m_mesh->get(), submeshBuffers, submeshBufferOffsets);
         ModelIO_Bindings::extractSubmeshIndexCounts(m_mesh->get(), indexCounts);
+        
+        for (int i = 0; i < submeshCount; ++i) {
+            m_submeshes.push_back(MTKSubmesh{
+                                    static_cast<MTL::PrimitiveType>(primitiveTypes[i]),
+                                    static_cast<MTL::IndexType>(indexTypes[i]),
+                                    {static_cast<MTL::Buffer*>(submeshBuffers[i]), submeshBufferOffsets[i]},
+                                    indexCounts[i]});
+        }
         
     }
         

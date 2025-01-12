@@ -5464,6 +5464,7 @@ namespace _impl {
 extern "C" {
 #endif
 
+SWIFT_EXTERN void * _Nonnull $s16ModelIO_Bindings24MDLtoMTLVertexDescriptor09mdlVertexF3PtrS2v_tF(void * _Nonnull mdlVertexDescriptorPtr) SWIFT_NOEXCEPT SWIFT_CALL; // MDLtoMTLVertexDescriptor(mdlVertexDescriptorPtr:)
 SWIFT_EXTERN ptrdiff_t $s16ModelIO_Bindings14countSubmeshes10mtkMeshPtrSiSv_tF(void * _Nonnull mtkMeshPtr) SWIFT_NOEXCEPT SWIFT_CALL; // countSubmeshes(mtkMeshPtr:)
 SWIFT_EXTERN ptrdiff_t $s16ModelIO_Bindings18countVertexBuffers10mtkMeshPtrSiSv_tF(void * _Nonnull mtkMeshPtr) SWIFT_NOEXCEPT SWIFT_CALL; // countVertexBuffers(mtkMeshPtr:)
 SWIFT_EXTERN void * _Nonnull $s16ModelIO_Bindings16createBoxMDLMesh16boxWithExtentPtr08segmentsJ013inwardNormals15rawGeometryType09allocatorJ0SvSPySfG_SPys6UInt32VGSbSiSvtF(float const * _Nonnull boxWithExtentPtr, uint32_t const * _Nonnull segmentsPtr, bool inwardNormals, ptrdiff_t rawGeometryType, void * _Nonnull allocatorPtr) SWIFT_NOEXCEPT SWIFT_CALL; // createBoxMDLMesh(boxWithExtentPtr:segmentsPtr:inwardNormals:rawGeometryType:allocatorPtr:)
@@ -5492,6 +5493,11 @@ SWIFT_EXTERN void $s16ModelIO_Bindings18setMDLVertexLayout22mdlVertexDescriptorP
 }
 }
 namespace ModelIO_Bindings SWIFT_PRIVATE_ATTR SWIFT_SYMBOL_MODULE("ModelIO_Bindings") {
+
+
+SWIFT_INLINE_THUNK void * _Nonnull MDLtoMTLVertexDescriptor(void * _Nonnull mdlVertexDescriptorPtr) noexcept SWIFT_SYMBOL("s:16ModelIO_Bindings24MDLtoMTLVertexDescriptor09mdlVertexF3PtrS2v_tF") SWIFT_WARN_UNUSED_RESULT {
+  return _impl::$s16ModelIO_Bindings24MDLtoMTLVertexDescriptor09mdlVertexF3PtrS2v_tF(mdlVertexDescriptorPtr);
+}
 
 
 SWIFT_INLINE_THUNK swift::Int countSubmeshes(void * _Nonnull mtkMeshPtr) noexcept SWIFT_SYMBOL("s:16ModelIO_Bindings14countSubmeshes10mtkMeshPtrSiSv_tF") SWIFT_WARN_UNUSED_RESULT {

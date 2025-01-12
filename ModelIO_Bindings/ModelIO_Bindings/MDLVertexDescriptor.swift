@@ -58,3 +58,11 @@ public func releaseMDLVertexDescriptor(mdlVertexDescriptor: UnsafeMutableRawPoin
     let mdlVertexDescriptorPtr = Unmanaged<MDLVertexDescriptor>.fromOpaque(mdlVertexDescriptor);
     mdlVertexDescriptorPtr.release();
 }
+
+public func MDLtoMTLVertexDescriptor(mdlVertexDescriptorPtr: UnsafeMutableRawPointer) -> UnsafeMutableRawPointer
+{
+    let mdlVertexDescriptor = Unmanaged<MDLVertexDescriptor>.fromOpaque(mdlVertexDescriptorPtr).takeUnretainedValue();
+    let mtlVertexDescriptor = MTKMetalVertexDescriptorFromModelIO(mdlVertexDescriptor)!;
+    let mtlVertexDescriptorPtr = UnsafeMutableRawPointer(Unmanaged.passRetained(mtlVertexDescriptor).toOpaque());
+    return mtlVertexDescriptorPtr;
+}
