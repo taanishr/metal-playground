@@ -39,6 +39,7 @@ private:
     MTL::VertexDescriptor* m_vertexDescriptor;
     std::counting_semaphore<maxOutstandingFrameCount> m_frameSemaphore;
     double m_time;
+    MTL::DepthStencilState* m_depthStencilState;
 };
 
 #endif

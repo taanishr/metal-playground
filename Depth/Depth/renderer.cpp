@@ -25,11 +25,12 @@ Renderer::Renderer(MTL::Device* device, MTK::View* view):
 
 Renderer::~Renderer()
 {
+    m_depthStencilState->release();
+    m_vertexDescriptor->release();
+    m_constantsBuffer->release();
+    m_renderPipelineState->release();
     m_commandQueue->release();
     m_device->release();
-    m_renderPipelineState->release();
-    m_constantsBuffer->release();
-    m_vertexDescriptor->release();
 }
 
 void Renderer::makeResources()
@@ -71,6 +72,8 @@ void Renderer::makePipeline()
     
     renderPipelineDescriptor->colorAttachments()->object(0)->setPixelFormat(m_view->colorPixelFormat());
     
+    renderPipelineDescriptor->setDepthAttachmentPixelFormat(m_view->depthStencilPixelFormat());
+    
     NS::Error* error = nullptr;
     
     m_renderPipelineState = m_device->newRenderPipelineState(renderPipelineDescriptor, &error);
@@ -78,10 +81,16 @@ void Renderer::makePipeline()
     if (error)
         std::cerr << "Couldn't make render pipeline state";
     
-    library->release();
-    renderPipelineDescriptor->release();
-    vertexFunction->release();
+    MTL::DepthStencilDescriptor* depthStencilDescriptor = MTL::DepthStencilDescriptor::alloc()->init();
+    depthStencilDescriptor->setDepthWriteEnabled(true);
+    depthStencilDescriptor->setDepthCompareFunction(MTL::CompareFunction::CompareFunctionLess);
+    m_depthStencilState = m_device->newDepthStencilState(depthStencilDescriptor);
+    
+    depthStencilDescriptor->release();
     fragmentFunction->release();
+    vertexFunction->release();
+    renderPipelineDescriptor->release();
+    library->release();
 }
 
 void Renderer::updateConstants()
@@ -134,6 +143,10 @@ void Renderer::draw()
     
     MTL::RenderCommandEncoder* encoder = commandBuffer->renderCommandEncoder(renderPassDescriptor);
     encoder->setRenderPipelineState(m_renderPipelineState);
+    encoder->setDepthStencilState(m_depthStencilState);
+    
+    encoder->setFrontFacingWinding(MTL::Winding::WindingCounterClockwise);
+    encoder->setCullMode(MTL::CullMode::CullModeBack);
     
     encoder->setVertexBuffer(m_constantsBuffer, m_constantsBufferOffset, 2);
     
