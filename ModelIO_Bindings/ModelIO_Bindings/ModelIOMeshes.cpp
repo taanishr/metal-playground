@@ -23,7 +23,7 @@ namespace ModelIO {
 
     MDLMesh::MDLMesh(Box box, MTKMeshBufferAllocator& allocator):
         m_mesh{std::make_shared<SwiftObject>(
-                ModelIO_Bindings::createSphereMDLMesh(
+                ModelIO_Bindings::createBoxMDLMesh(
                 box.boxWithExtent.data(),
                 box.segments.data(),
                 box.inwardsNormal,

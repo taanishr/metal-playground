@@ -56,11 +56,13 @@ public func createBoxMDLMesh(
 {
     let allocator = Unmanaged<MTKMeshBufferAllocator>.fromOpaque(allocatorPtr).takeUnretainedValue();
     let geometryType = MDLGeometryType(rawValue: rawGeometryType)!;
+    
     let mdlMesh = MDLMesh(boxWithExtent: pointerToSIMD(pointer: boxWithExtentPtr),
                           segments: pointerToSIMD(pointer: segmentsPtr),
                           inwardNormals: inwardNormals,
                           geometryType: geometryType,
                           allocator: allocator);
+
     let mdlMeshPtr = UnsafeMutableRawPointer(Unmanaged.passRetained(mdlMesh).toOpaque());
     return mdlMeshPtr;
 }
