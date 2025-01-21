@@ -11,22 +11,27 @@
 #include "ModelIO.h"
 
 class NodeConstants {
-    simd_float4x4 modelViewProjectionMatrix;
-    simd_float4 color;
+public:
+    NodeConstants(simd_float4x4 modelViewProjectionMatrix, simd_float4 color);
+    simd_float4x4 m_modelViewProjectionMatrix;
+    simd_float4 m_color;
 };
 
 class Node {
 public:
-    ModelIO::MTKMesh m_mesh;
-    simd_float4 m_color = simd_float4{1,1,1,1};
-    simd_float4x4 m_transform = matrix_identity_float4x4;
-    std::vector<Node*> m_nodes;
-    Node* m_parentNode;
+    Node() = default;
+    
+    Node(ModelIO::MTKMesh mesh);
     
     void addChildNode(Node* node);
     void removeFromParent();
     void removeChildNode(Node* node);
     simd_float4x4 worldTransform() const;
     
+    ModelIO::MTKMesh m_mesh;
+    simd_float4 m_color = simd_float4{1,1,1,1};
+    simd_float4x4 m_transform = matrix_identity_float4x4;
+    std::vector<Node*> m_nodes;
+    Node* m_parentNode;
 };
 #endif

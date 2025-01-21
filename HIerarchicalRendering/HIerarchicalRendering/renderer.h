@@ -14,6 +14,7 @@
 #include <chrono>
 #include <numbers>
 #include <ModelIO.h>
+#include "Node.h"
 
 constexpr int maxObjects = 16;
 constexpr int maxOutstandingFrameCount = 3;

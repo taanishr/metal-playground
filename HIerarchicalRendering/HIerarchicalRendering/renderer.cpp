@@ -62,6 +62,9 @@ void Renderer::makeResources()
     moonNode.m_mesh = sphereMTKMesh;
     moonNode.m_color = simd_float4{0.7,0.7,0.7,1};
     
+    sunNode.addChildNode(&planetNode);
+    planetNode.addChildNode(&moonNode);
+    
     m_nodes.push_back(&sunNode);
     m_nodes.push_back(&planetNode);
     m_nodes.push_back(&moonNode);
@@ -145,20 +148,21 @@ void Renderer::updateConstants()
 //    m_nodes[0].modelMatrix = matrix_multiply(simdHelpers::translate({-2,0,0}),rotationMatrix);
 //    m_nodes[1].modelMatrix = matrix_multiply(simdHelpers::translate({2,0,0}), rotationMatrix);
 //    
-//    for (int i = 0; i < m_nodes.size(); ++i) {
-//        auto& modelMatrix = m_nodes[i].modelMatrix;
-//        
-//        simd_float4x4 transformationMatrix = matrix_multiply(projectionMatrix, viewMatrix);
-//    
-//        transformationMatrix = matrix_multiply(transformationMatrix, modelMatrix);
-//        
-//        int constantsBufferOffset = constantBufferOffset(i, m_frameIndex);
-//        
-//        uint8_t* rawConstantsPtr = static_cast<uint8_t*>(m_constantsBuffer->contents());
-//        simd_float4x4* constantsPtr = reinterpret_cast<simd_float4x4*>(rawConstantsPtr + constantsBufferOffset);
-//        
-//        std::memcpy(constantsPtr, &transformationMatrix, m_constantsSize);
-//    }
+    for (int i = 0; i < m_nodes.size(); ++i) {
+        simd_float4x4 transformationMatrix = matrix_multiply(projectionMatrix, viewMatrix);
+    
+        transformationMatrix = matrix_multiply(transformationMatrix, m_nodes[i]->worldTransform());
+        
+        NodeConstants constants {transformationMatrix, m_nodes[i]->m_color};
+        
+        int constantsBufferOffset = constantBufferOffset(i, m_frameIndex);
+        
+        uint8_t* rawConstantsPtr = static_cast<uint8_t*>(m_constantsBuffer->contents());
+        simd_float4x4* constantsPtr = reinterpret_cast<simd_float4x4*>(rawConstantsPtr + constantsBufferOffset);
+        
+        std::memcpy(constantsPtr, &constants, m_constantsSize);
+    }
+
     
 }
 
@@ -184,7 +188,7 @@ void Renderer::draw()
     encoder->setCullMode(MTL::CullMode::CullModeBack);
     
     for (int i = 0; i < m_nodes.size(); ++i) {
-        auto& mesh = m_nodes[i].mesh;
+        auto& mesh = m_nodes[i]->m_mesh;
         
         encoder->setVertexBuffer(m_constantsBuffer, constantBufferOffset(i, m_frameIndex), 2);
         

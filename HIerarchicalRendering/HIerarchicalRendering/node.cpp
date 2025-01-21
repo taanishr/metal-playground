@@ -7,17 +7,44 @@
 
 #include "node.h"
 
-class Node {
-public:
-    ModelIO::MTKMesh m_mesh;
-    simd_float4 m_color = simd_float4{1,1,1,1};
-    simd_float4x4 m_transform = matrix_identity_float4x4;
-    std::vector<Node*> m_nodes;
-    Node* m_parentNode;
-    
-    void addChildNode(Node* node);
-    void removeFromParent();
-    void removeChildNode(Node* node);
-    simd_float4x4 worldTransform() const;
-    
-};
+NodeConstants::NodeConstants(simd_float4x4 modelViewProjectionMatrix, simd_float4 color):
+    m_modelViewProjectionMatrix{modelViewProjectionMatrix},
+    m_color{color}
+{};
+
+Node::Node(ModelIO::MTKMesh mesh):
+    m_mesh{mesh}, m_parentNode{nullptr}
+{}
+
+void Node::addChildNode(Node* node)
+{
+    m_nodes.push_back(node);
+    node->m_parentNode = this;
+}
+
+void Node::removeFromParent()
+{
+    if (m_parentNode) {
+        m_parentNode->removeChildNode(this);
+    }
+}
+
+void Node::removeChildNode(Node* node)
+{
+    auto it = std::find(m_nodes.begin(), m_nodes.end(), node);
+    if (it != m_nodes.end()) {
+        (*it)->m_parentNode = nullptr;
+        m_nodes.erase(it);
+    }
+}
+
+simd_float4x4 Node::worldTransform() const
+{
+    if (m_parentNode) {
+        return matrix_multiply(m_transform, m_parentNode->m_transform);
+    }else {
+        return m_transform;
+    }
+}
+
+
