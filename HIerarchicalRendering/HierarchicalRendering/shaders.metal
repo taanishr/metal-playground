@@ -36,7 +36,5 @@ vertex VertexOut vertex_main(
 }
 
 fragment float4 fragment_main(VertexOut in [[stage_in]]) {
-    float3 N = normalize(in.normal);
-    float4 color = in.color;
-    return color;
+    return in.color;
 }

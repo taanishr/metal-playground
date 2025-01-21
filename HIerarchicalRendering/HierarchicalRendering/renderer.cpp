@@ -127,28 +127,32 @@ void Renderer::updateConstants()
     float aspectRatio = float(m_view->drawableSize().width/m_view->drawableSize().height);
     simd_float4x4 projectionMatrix = simdHelpers::perspectiveProjection(std::numbers::pi/3.0, aspectRatio, 0.01, 100);
 
+    simd_float3 yAxis {0,1,0};
+    
     float planetRadius = 0.3;
     simd_float4x4 planetScale = simdHelpers::scale({planetRadius, planetRadius, planetRadius});
     
     float planetOrbitalRadius = 2;
     simd_float4x4 planetTranslate = simdHelpers::translate({planetOrbitalRadius, 0, 0});
     
-    simd_float3 planetAxis {0,1,0};
-    simd_float4x4 planetRotation = simdHelpers::rotateAbout(planetAxis, m_time);
+    simd_float4x4 planetRotation = simdHelpers::rotateAbout(yAxis, timeF);
     
-    planetNode.m_transform = matrix_multiply(planetTranslate, planetRotation);
+    planetNode.m_transform = matrix_multiply(planetRotation, planetTranslate);
     planetNode.m_transform = matrix_multiply(planetNode.m_transform, planetScale);
     
+    float moonRadius = 0.2;
+    simd_float4x4 moonScale = simdHelpers::scale({moonRadius, moonRadius, moonRadius});
     
+    float moonOrbitalRadius = 2;
+    simd_float4x4 moonTranslate = simdHelpers::translate({moonOrbitalRadius, 0, 0});
     
-//    simd_float3 rotationAxis = simd::normalize(simd::float3{0.3,0.7,0.2});
-//    simd_float4x4 rotationMatrix = simdHelpers::rotateAbout(rotationAxis, timeF);
+    simd_float4x4 moonRotation = simdHelpers::rotateAbout(yAxis, timeF);
     
-    
-//    m_nodes[0].modelMatrix = matrix_multiply(simdHelpers::translate({-2,0,0}),rotationMatrix);
-//    m_nodes[1].modelMatrix = matrix_multiply(simdHelpers::translate({2,0,0}), rotationMatrix);
-//    
+    moonNode.m_transform = matrix_multiply(moonRotation, moonTranslate);
+    moonNode.m_transform = matrix_multiply(moonNode.m_transform, moonScale);
+
     for (int i = 0; i < m_nodes.size(); ++i) {
+        std::cout << "Current node:" << i << '\n';
         simd_float4x4 transformationMatrix = matrix_multiply(projectionMatrix, viewMatrix);
     
         transformationMatrix = matrix_multiply(transformationMatrix, m_nodes[i]->worldTransform());
@@ -162,8 +166,6 @@ void Renderer::updateConstants()
         
         std::memcpy(constantsPtr, &constants, m_constantsSize);
     }
-
-    
 }
 
 
