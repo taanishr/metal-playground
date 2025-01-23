@@ -17,6 +17,8 @@ namespace ModelIO {
 
     constexpr const char* MDLVertexAttributeNormal = "normal";
 
+    constexpr const char* MDLVertexAttributeTextureCoordinate = "textureCoordinate";
+
     enum class MDLGeometryType {
         points,
         lines,

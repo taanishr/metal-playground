@@ -25,7 +25,13 @@ public func createTexture(loaderPtr: UnsafeMutableRawPointer, filePath: UnsafePo
 {
     let loader = Unmanaged<MTKTextureLoader>.fromOpaque(loaderPtr).takeUnretainedValue();
     let fileURL = URL(fileURLWithPath: String(cString: filePath));
-    guard let texture = try? loader.newTexture(URL: fileURL)
+    
+    let options: [MTKTextureLoader.Option: Any] = [
+        .textureUsage: MTLTextureUsage.shaderRead.rawValue,
+        .textureStorageMode: MTLStorageMode.private.rawValue
+    ];
+    
+    guard let texture = try? loader.newTexture(URL: fileURL, options: options)
     else {
         return nil;
     }
