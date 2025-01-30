@@ -207,14 +207,13 @@ public func extractSubmeshIndexCounts
     }
 }
 
+
 // release
 public func releaseMTKMesh(mtkMeshPtr: UnsafeMutableRawPointer)
 {
     let mtkMesh = Unmanaged<MTKMesh>.fromOpaque(mtkMeshPtr);
     mtkMesh.release();
 }
-
-
 
 
 
