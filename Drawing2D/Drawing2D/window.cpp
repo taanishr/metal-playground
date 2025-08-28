@@ -30,6 +30,7 @@ void Renderer::draw(MTK::View* view)
     MTL::RenderCommandEncoder* encoder = commandBuffer->renderCommandEncoder(renderPassDescriptor);
     encoder->endEncoding();
     // presentDrawable (show the drawable stuff as early as possible?) Looks like drawables are textures, while render descriptors are just previous stuff (lines, points, etc...?)
+    // was incorrect, render pass descriptors set rendering configuration (color mode, depth stencil, etc...)
     commandBuffer->presentDrawable(view->currentDrawable());
     commandBuffer->commit();
     

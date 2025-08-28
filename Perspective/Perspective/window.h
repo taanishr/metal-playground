@@ -12,6 +12,7 @@
 #include "metal_imports.h"
 #include "renderer.h"
 
+
 class MTKViewDelegate : public MTK::ViewDelegate {
 public:
     MTKViewDelegate(MTL::Device* device, MTK::View* view);
